@@ -1,6 +1,13 @@
+####create directory for ogs output
+```
 mkdir ogs_output
-#ln -s ../1_trim/2_trimmomatic/*.fastq ./
+```
+####create links for all fastq.gz files
+```
 ln -s ../../archive/Project_Hewezi/*/*.fastq.gz ./
+```
+####reanme for sanity
+```
 mv TH-10_CTATAC_L001_R1_001.fastq.gz TH-10_001.fastq.gz
 mv TH-10_CTATAC_L001_R1_002.fastq.gz TH-10_002.fastq.gz
 mv TH-10_CTATAC_L001_R1_003.fastq.gz TH-10_003.fastq.gz
@@ -43,14 +50,6 @@ mv TH-9_CACGAT_L001_R1_001.fastq.gz TH-9_001.fastq.gz
 mv TH-9_CACGAT_L001_R1_002.fastq.gz TH-9_002.fastq.gz
 mv TH-9_CACGAT_L001_R1_003.fastq.gz TH-9_003.fastq.gz
 mv TH-9_CACGAT_L001_R1_004.fastq.gz TH-9_004.fastq.gz
-####this is done purely for my sanity in all later steps
-```
-```
-####s1.fastq becomes s2.fastq and s2+3.fastq becomes s3.fastq 
-```
-```
-####now all ogs jobs should be an array 2-5 instead of 1-5
-```
 ```
 ---
 ####profile bowtie2 mapping results
