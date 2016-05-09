@@ -43,9 +43,6 @@ mv TH-9_CACGAT_L001_R1_001.fastq.gz TH-9_001.fastq.gz
 mv TH-9_CACGAT_L001_R1_002.fastq.gz TH-9_002.fastq.gz
 mv TH-9_CACGAT_L001_R1_003.fastq.gz TH-9_003.fastq.gz
 mv TH-9_CACGAT_L001_R1_004.fastq.gz TH-9_004.fastq.gz
-#ln -s ../
-#cat s2.trim.fastq s3.trim.fastq > s23.trim.fastq
-#rm -f s2.fastq s3.fastq
 ####this is done purely for my sanity in all later steps
 ```
 ```
@@ -54,10 +51,10 @@ mv TH-9_CACGAT_L001_R1_004.fastq.gz TH-9_004.fastq.gz
 ```
 ####now all ogs jobs should be an array 2-5 instead of 1-5
 ```
-#mv s1.trim.fastq s2.trim.fastq
-#mv s23.trim.fastq s3.trim.fastq
 ```
 ---
+####profile bowtie2 mapping results
+```
 echo "library	total reads	aligned 0 times	aligned exactly 1 time	aligned >1 times	overall alignment rate"
 for file in `ls ogs_output/*bowtie2*`
 do
