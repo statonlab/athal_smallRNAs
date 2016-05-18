@@ -1,9 +1,9 @@
-####create links to the trimmed fastq files
+####links the cutadapt trimmed fastq files
 ```
-ln -s ../2_trimmomatic/*.fastq ./
+ln -s ../2_cutadapt/*.fastq ./
 ```
 ---
-####loop through all the trimmed fastq files and run quality checks on them
+####run fastqc on all cutadapt trimmed files
 ```
 for f in `ls *.fastq`
 do
