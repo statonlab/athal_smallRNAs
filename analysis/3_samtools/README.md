@@ -10,10 +10,10 @@ for f in `ls *.sam`
 do
 base=`echo $f | sed 's/\.sam//'`
 echo "#$ -N $base
-\#$ -q short*
-\#$ -cwd
-\#$ -o ogs_output.txt
-\#$ -e ogs_error.txt
+#$ -q short*
+#$ -cwd
+#$ -o ogs_output.txt
+#$ -e ogs_error.txt
 module load samtools
 samtools view -b $f |\
 samtools sort -O bam -T $base.tmp - > $base.bam" > sub.ogs
@@ -28,10 +28,10 @@ for f in `ls *.bam`
 do
 base=`echo $f | sed 's/\.bam//'`
 echo "#$ -N $base
-\#$ -q short*
-\#$ -cwd
-\#$ -o ogs_output.txt
-\#$ -e ogs_error.txt
+#$ -q short*
+#$ -cwd
+#$ -o ogs_output.txt
+#$ -e ogs_error.txt
 module load samtools
 samtools index $f
 samtools view $f > $base.sorted.sam" > sub.ogs
@@ -53,10 +53,10 @@ else
 	fix=`echo $i`
 fi
 echo "#$ -N TH-${fix}
-\#$ -q short*
-\#$ -cwd
-\#$ -o ogs_output.txt
-\#$ -e ogs_error.txt
+#$ -q short*
+#$ -cwd
+#$ -o ogs_output.txt
+#$ -e ogs_error.txt
 module load samtools
 samtools merge TH-${fix}.merged.bam $files
 samtools sort -n TH-${fix}.merged.bam > TH-$fix.merged.sorted.bam
