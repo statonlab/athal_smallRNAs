@@ -20,6 +20,7 @@ grep "rRNA" TAIR10_RNA.gff3 | sed 's/Chr//g'> rRNA.gff3
 grep "snoRNA" TAIR10_RNA.gff3 | sed 's/Chr//g'> snoRNA.gff3
 grep "snRNA" TAIR10_RNA.gff3 | sed 's/Chr//g' > snRNA.gff3
 grep "gene" TAIR10_GFF3_genes.gff | sed 's/Chr//g' > gene.gff3
+./add_introns_to_gff.pl TAIR10_GFF3_genes.gff | grep " intron  " | sed 's/Chr//g' > intron.gff3
 # we'll want to combine the miRNAs from TAIR10 with the ones from miRBase...
 grep "miRNA" TAIR10_RNA.gff3 | sed 's/Chr//g'> miRNA_TAIR10.gff3
 # we need to get rid of the Chr preceding the chromosome numbers so everything has similar #'ing conventions

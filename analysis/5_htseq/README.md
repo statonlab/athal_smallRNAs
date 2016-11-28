@@ -1,3 +1,357 @@
+####process each of the siRNA.sam files to see what transposable_elements they overlap with each siRNA.sam file is separated into 20,21,22,23,24,and 25 bps.
+```
+declare -a arr=("three_prime_UTR" "five_prime_UTR" "exon" "promoter")
+for f in `ls 2_output/*.siRNA.sam`
+do
+for i in {20..25} 
+do
+for l in "${arr[@]}"
+do
+lib=`echo $f | sed 's/\.siRNA\.sam//' | sed 's/2_output\///g'`
+output_dir="9_output"
+spe=$l
+echo "#$ -N $lib.${i}M.htseq
+#$ -q medium*
+#$ -cwd
+#$ -o ./ogs_output/ogs_output.txt
+#$ -e ./ogs_output/ogs_error.txt
+grep "${i}M" ./2_output/$lib.siRNA.sam > tmp.${i}M.$lib.$spe.siRNA.sam
+/lustre/projects/staton/software/htseq-count \
+-s no \
+-t $spe \
+-i Parent \
+-a 0 \
+-o ./$output_dir/$lib.$spe.siRNA.sam \
+tmp.${i}M.$lib.$spe.siRNA.sam \
+TAIR10_genes.gff3 \
+>& ./$output_dir/$lib.$spe.${i}M.siRNA.htseq.txt
+grep "__no_feature" ./$output_dir/$lib.$spe.${i}M.siRNA.sam | grep -o '.*[	.*$]' > ./$output_dir/$lib.$spe.${i}M.siRNA.nohit.sam
+grep -v "__no_feature" ./$output_dir/$lib.$spe.${i}M.siRNA.sam > ./$output_dir/$lib.$spe.${i}M.siRNA.parse.sam
+rm -f tmp.${i}M.$lib.$spe.siRNA.sam
+" > sub.ogs
+qsub sub.ogs
+rm -f sub.ogs
+done
+done
+done
+```
+---
+####process each of the miRNA.sam files to see what transposable_elements they overlap with each miRNA.sam file is separated into 20,21,22,23,24,and 25 bps.
+```
+for f in `ls 2_output/*.miRNA_TAIR10.sam`
+do
+for i in {20..25} 
+do
+lib=`echo $f | sed 's/\.miRNA_TAIR10\.sam//' | sed 's/2_output\///g'`
+output_dir="10_output"
+spe="miRNA_TAIR10"
+echo "#$ -N $lib.${i}M.htseq
+#$ -q medium*
+#$ -cwd
+#$ -o ./ogs_output/ogs_output.txt
+#$ -e ./ogs_output/ogs_error.txt
+grep "${i}M" ./2_output/$lib.miRNA_TAIR10.sam > tmp.${i}M.$lib.miRNA.sam
+/lustre/projects/staton/software/htseq-count \
+-s no \
+-t miRNA \
+-i ID \
+-a 0 \
+-o ./$output_dir/$lib.$spe.miRNA.sam \
+tmp.${i}M.$lib.miRNA.sam \
+${spe}.gff3 \
+>& ./$output_dir/$lib.$spe.${i}M.miRNA.htseq.txt
+grep "__no_feature" ./$output_dir/$lib.$spe.${i}M.miRNA.sam | grep -o '.*[	.*$]' > ./$output_dir/$lib.$spe.${i}M.miRNA.nohit.sam
+grep -v "__no_feature" ./$output_dir/$lib.$spe.${i}M.miRNA.sam > ./$output_dir/$lib.$spe.${i}M.miRNA.parse.sam
+rm -f tmp.${i}M.$lib.miRNA.sam
+" > sub.ogs
+qsub sub.ogs
+rm -f sub.ogs
+done
+done
+```
+---
+####find siRNAs that overlap with genes, we are going to use this output for finding TASIs
+```
+for f in `ls 2_output/*.siRNA.sam`
+do
+lib=`echo $f | sed 's/\.siRNA\.sam//' | sed 's/2_output\///g'`
+output_dir="11_output"
+spe="gene"
+echo "#$ -N $lib.htseq
+#$ -q medium*
+#$ -cwd
+#$ -o ./ogs_output/ogs_output.txt
+#$ -e ./ogs_output/ogs_error.txt
+/lustre/projects/staton/software/htseq-count \
+-s no \
+-t $spe \
+-i ID \
+-a 0 \
+-o ./$output_dir/$lib.$spe.siRNA.sam \
+$f \
+${spe}.gff3 \
+>& ./$output_dir/$lib.$spe.siRNA.htseq.txt
+grep "__no_feature" ./$output_dir/$lib.$spe.siRNA.sam | grep -o '.*[	.*$]' > ./$output_dir/$lib.$spe.siRNA.nohit.sam
+grep -v "__no_feature" ./$output_dir/$lib.$spe.siRNA.sam > ./$output_dir/$lib.$spe.siRNA.parse.sam
+rm -f tmp.$lib.siRNA.sam
+" > sub.ogs
+qsub sub.ogs
+rm -f sub.ogs
+done
+```
+---
+####find siRNAs that overlap with genes, we are going to use this output for finding TASIs
+```
+for f in `ls 2_output/*.siRNA.sam`
+do
+lib=`echo $f | sed 's/\.siRNA\.sam//' | sed 's/2_output\///g'`
+output_dir="11_output"
+spe="gene"
+echo "#$ -N $lib.htseq
+#$ -q medium*
+#$ -cwd
+#$ -o ./ogs_output/ogs_output.txt
+#$ -e ./ogs_output/ogs_error.txt
+/lustre/projects/staton/software/htseq-count \
+-s no \
+-t $spe \
+-i ID \
+-a 0 \
+-o ./$output_dir/$lib.$spe.siRNA.sam \
+$f \
+${spe}.gff3 \
+>& ./$output_dir/$lib.$spe.siRNA.htseq.txt
+grep "__no_feature" ./$output_dir/$lib.$spe.siRNA.sam | grep -o '.*[	.*$]' > ./$output_dir/$lib.$spe.siRNA.nohit.sam
+grep -v "__no_feature" ./$output_dir/$lib.$spe.siRNA.sam > ./$output_dir/$lib.$spe.siRNA.parse.sam
+rm -f tmp.$lib.siRNA.sam
+" > sub.ogs
+qsub sub.ogs
+rm -f sub.ogs
+done
+```
+---
+####process each of the siRNA.sam files to see what transposable_elements they overlap with each siRNA.sam file is separated into 20,21,22,23,24,and 25 bps.
+```
+for f in `ls 2_output/*.siRNA.sam`
+do
+for i in {20..25} 
+do
+lib=`echo $f | sed 's/\.siRNA\.sam//' | sed 's/2_output\///g'`
+output_dir="13_output"
+spe="intron"
+echo "#$ -N $lib.${i}M.htseq
+#$ -q medium*
+#$ -cwd
+#$ -o ./ogs_output/ogs_output.txt
+#$ -e ./ogs_output/ogs_error.txt
+grep "${i}M" ./2_output/$lib.siRNA.sam > tmp.${i}M.$lib.siRNA.sam
+/lustre/projects/staton/software/htseq-count \
+-s no \
+-t $spe \
+-i Parent \
+-a 0 \
+-o ./$output_dir/$lib.$spe.siRNA.sam \
+tmp.${i}M.$lib.siRNA.sam \
+${spe}.gff3 \
+>& ./$output_dir/$lib.$spe.${i}M.siRNA.htseq.txt
+grep "__no_feature" ./$output_dir/$lib.$spe.${i}M.siRNA.sam | grep -o '.*[	.*$]' > ./$output_dir/$lib.$spe.${i}M.siRNA.nohit.sam
+grep -v "__no_feature" ./$output_dir/$lib.$spe.${i}M.siRNA.sam > ./$output_dir/$lib.$spe.${i}M.siRNA.parse.sam
+rm -f tmp.${i}M.$lib.siRNA.sam
+" > sub.ogs
+qsub sub.ogs
+rm -f sub.ogs
+done
+done
+```
+---
+####generate htseq counts for all RNASeq results, will extract relevant TASI related genes.
+```
+for f in `ls *.merged.sorted.sam`
+do
+lib=`echo $f | sed 's/\.merged\.sorted\.sam//'`
+output_dir="14_output"
+if [ 1==1 ]; then
+echo "#$ -N $lib.htseq
+#$ -q medium*
+#$ -cwd
+#$ -o ./ogs_output/ogs_output.txt
+#$ -e ./ogs_output/ogs_error.txt
+"
+spe="gene"
+echo "
+/lustre/projects/staton/software/htseq-count \
+-s no \
+-t $spe \
+-i ID \
+-a 0 \
+-o ./$output_dir/$lib.$spe.sam \
+$lib.merged.sorted.sam \
+$spe.gff3 \
+>& ./$output_dir/$lib.$spe.htseq.txt
+grep "__no_feature" ./$output_dir/$lib.$spe.sam | grep -o '.*[	.*$]' > ./$output_dir/$lib.$spe.nohit.sam
+grep -v "__no_feature" ./$output_dir/$lib.$spe.sam > ./$output_dir/$lib.$spe.parse.sam
+"
+fi > sub.ogs
+qsub sub.ogs
+rm -f sub.ogs
+done
+```
+---
+####find siRNAs that overlap with genes, we are going to use this output for finding TASIs
+```
+for f in `ls 2_output/*.siRNA.sam`
+do
+lib=`echo $f | sed 's/\.siRNA\.sam//' | sed 's/2_output\///g'`
+output_dir="15_output"
+spe="transposable_element"
+echo "#$ -N $lib.htseq
+#$ -q medium*
+#$ -cwd
+#$ -o ./ogs_output/ogs_output.txt
+#$ -e ./ogs_output/ogs_error.txt
+/lustre/projects/staton/software/htseq-count \
+-s no \
+-t $spe \
+-i ID \
+-a 0 \
+-o ./$output_dir/$lib.$spe.siRNA.sam \
+$f \
+${spe}_2kb.gff3 \
+>& ./$output_dir/$lib.$spe.siRNA.htseq.txt
+grep "__no_feature" ./$output_dir/$lib.$spe.siRNA.sam | grep -o '.*[	.*$]' > ./$output_dir/$lib.$spe.siRNA.nohit.sam
+grep -v "__no_feature" ./$output_dir/$lib.$spe.siRNA.sam > ./$output_dir/$lib.$spe.siRNA.parse.sam
+rm -f tmp.$lib.siRNA.sam
+" > sub.ogs
+qsub sub.ogs
+rm -f sub.ogs
+done
+```
+---
+####make minor modifications to gff files to work with HTSeq
+```
+for file in /lustre/projects/staton/projects/athal_methylation/analysis/6_methylKit/output/gff3_2/*
+do
+base=$(basename $file)
+cat $file | sed 's/^Chr//g' | sed 's/region/DMR/g' > 16_$base.gff3
+done 
+```
+---
+####process files for reads that overlap with genes
+```
+s=1
+for f in `ls 2_output/*.siRNA.sam`
+do
+for i in {20..25}
+do
+lib=`echo $f | sed 's/\.siRNA\.sam//' | sed 's/2_output\///g'`
+output_dir="17_output"
+spe="DMR"
+echo "#$ -N $lib.${i}M.htseq
+#$ -q medium*
+#$ -cwd
+#$ -o ./ogs_output/ogs_output.txt
+#$ -e ./ogs_output/ogs_error.txt" > sub.ogs
+for gff3 in `ls 16_*.gff3`
+do
+base=$(echo $gff3 | sed 's/16_//g' | sed 's/\.gff3//g')
+echo "grep "${i}M" ./2_output/$lib.siRNA.sam > tmp.${i}M.$lib.siRNA.sam
+/lustre/projects/staton/software/htseq-count \
+-s no \
+-t $spe \
+-i ID \
+-a 0 \
+-o ./$output_dir/$lib.$spe.${i}M.$base.sam \
+tmp.${i}M.$lib.siRNA.sam \
+$gff3 \
+>& ./$output_dir/$lib.$spe.${i}M.$base.htseq.txt
+grep "__no_feature" ./$output_dir/$lib.$spe.${i}M.$base.sam | grep -o '.*[	.*$]' > ./$output_dir/$lib.$spe.${i}M.$base.nohit.sam
+grep -v "__no_feature" ./$output_dir/$lib.$spe.${i}M.$base.sam > ./$output_dir/$lib.$spe.${i}M.$base.parse.sam
+rm -f tmp.${i}M.$lib.siRNA.sam" >> sub.ogs
+done
+qsub sub.ogs
+rm -f sub.ogs
+s=$(($s+1))
+echo $s
+done
+done
+```
+---
+####process each of the siRNA.sam files to see what transposable_elements they overlap with each siRNA.sam file is separated into 20,21,22,23,24,and 25 bps.
+```
+for f in `ls 2_output/*.siRNA.sam`
+do
+for i in {21,24,29,31} 
+do
+lib=`echo $f | sed 's/\.siRNA\.sam//' | sed 's/2_output\///g'`
+output_dir="18_output"
+echo "#$ -N $lib.${i}M.htseq
+#$ -q medium*
+#$ -cwd
+#$ -o ./ogs_output/ogs_output.txt
+#$ -e ./ogs_output/ogs_error.txt
+module load samtools
+grep "${i}M" ./2_output/$lib.siRNA.sam > tmp.${i}M.$lib.siRNA.sam
+cat header.sam tmp.${i}M.$lib.siRNA.sam > ./${output_dir}/${i}M.$lib.siRNA.sam
+rm -f tmp.${i}M.$lib.siRNA.sam
+samtools view -b ./${output_dir}/${i}M.$lib.siRNA.sam |\
+samtools sort -o ./${output_dir}/${i}M.$lib.siRNA.bam -
+samtools index ./${output_dir}/${i}M.$lib.siRNA.bam
+/lustre/projects/staton/software/htseq-count \
+-s no \
+-t DMR \
+-i ID \
+-a 0 \
+./${output_dir}/${i}M.$lib.siRNA.sam \
+DMR.gff3 \
+>& ./$output_dir/.${i}M.$lib.htseq.txt
+grep -v "processed" ./$output_dir/${i}M.$lib.htseq.txt | grep -v "^__" > ./$output_dir/${i}M.$lib.htseq.clean.txt
+" > sub.ogs
+qsub sub.ogs
+rm -f sub.ogs
+done
+done
+```
+---
+####process files for reads that overlap with genes
+```
+s=1
+for f in `ls 2_output/*.siRNA.sam`
+do
+for i in {29,31}
+do
+lib=`echo $f | sed 's/\.siRNA\.sam//' | sed 's/2_output\///g'`
+output_dir="19_output"
+spe="DMR"
+echo "#$ -N $lib.${i}M.htseq
+#$ -q medium*
+#$ -cwd
+#$ -o ./ogs_output/ogs_output.txt
+#$ -e ./ogs_output/ogs_error.txt" > sub.ogs
+for gff3 in `ls 16_*.gff3`
+do
+base=$(echo $gff3 | sed 's/16_//g' | sed 's/\.gff3//g')
+echo "grep "${i}M" ./2_output/$lib.siRNA.sam > tmp.${i}M.$lib.siRNA.sam
+/lustre/projects/staton/software/htseq-count \
+-s no \
+-t $spe \
+-i ID \
+-a 0 \
+-o ./$output_dir/$lib.$spe.${i}M.$base.sam \
+tmp.${i}M.$lib.siRNA.sam \
+$gff3 \
+>& ./$output_dir/$lib.$spe.${i}M.$base.htseq.txt
+grep "__no_feature" ./$output_dir/$lib.$spe.${i}M.$base.sam | grep -o '.*[	.*$]' > ./$output_dir/$lib.$spe.${i}M.$base.nohit.sam
+grep -v "__no_feature" ./$output_dir/$lib.$spe.${i}M.$base.sam > ./$output_dir/$lib.$spe.${i}M.$base.parse.sam
+rm -f tmp.${i}M.$lib.siRNA.sam" >> sub.ogs
+done
+qsub sub.ogs
+rm -f sub.ogs
+s=$(($s+1))
+echo $s
+done
+done
+```
+---
 ####create directories for bedtools output
 ```
 mkdir ogs_output
@@ -26,6 +380,7 @@ grep "rRNA" TAIR10_RNA.gff3 | sed 's/Chr//g'> rRNA.gff3
 grep "snoRNA" TAIR10_RNA.gff3 | sed 's/Chr//g'> snoRNA.gff3
 grep "snRNA" TAIR10_RNA.gff3 | sed 's/Chr//g' > snRNA.gff3
 grep "gene" TAIR10_GFF3_genes.gff | sed 's/Chr//g' > gene.gff3
+./add_introns_to_gff.pl TAIR10_GFF3_genes.gff | grep " intron  " | sed 's/Chr//g' > intron.gff3
 ```
 ####we'll want to combine the miRNAs from TAIR10 with the ones from miRBase...
 ```
@@ -302,6 +657,112 @@ cp ./$output_dir/$lib.$spe.nohit.sam ./$output_dir/$lib.siRNA.sam"
 fi > sub.ogs
 qsub sub.ogs
 rm -f sub.ogs
+done
+```
+---
+####process each of the siRNA.sam files to see what transposable_elements they overlap with each siRNA.sam file is separated into 20,21,22,23,24,and 25 bps.
+```
+declare -a arr=("three_prime_UTR" "five_prime_UTR" "exon" "promoter")
+for f in `ls 2_output/*.siRNA.sam`
+do
+for i in {29,31} 
+do
+for l in "${arr[@]}"
+do
+lib=`echo $f | sed 's/\.siRNA\.sam//' | sed 's/2_output\///g'`
+output_dir="30_output"
+spe=$l
+echo "#$ -N $lib.${i}M.htseq
+#$ -q medium*
+#$ -cwd
+#$ -o ./ogs_output/ogs_output.txt
+#$ -e ./ogs_output/ogs_error.txt
+grep "${i}M" ./2_output/$lib.siRNA.sam > tmp.${i}M.$lib.$spe.siRNA.sam
+/lustre/projects/staton/software/htseq-count \
+-s no \
+-t $spe \
+-i Parent \
+-a 0 \
+-o ./$output_dir/$lib.$spe.siRNA.sam \
+tmp.${i}M.$lib.$spe.siRNA.sam \
+TAIR10_genes.gff3 \
+>& ./$output_dir/$lib.$spe.${i}M.siRNA.htseq.txt
+grep "__no_feature" ./$output_dir/$lib.$spe.${i}M.siRNA.sam | grep -o '.*[	.*$]' > ./$output_dir/$lib.$spe.${i}M.siRNA.nohit.sam
+grep -v "__no_feature" ./$output_dir/$lib.$spe.${i}M.siRNA.sam > ./$output_dir/$lib.$spe.${i}M.siRNA.parse.sam
+rm -f tmp.${i}M.$lib.$spe.siRNA.sam
+" > sub.ogs
+qsub sub.ogs
+rm -f sub.ogs
+done
+done
+done
+```
+---
+####process each of the miRNA.sam files to see what transposable_elements they overlap with each miRNA.sam file is separated into 29,31 bps.
+```
+for f in `ls 2_output/*.miRNA_miRBase.sam`
+do
+for i in {29,31} 
+do
+lib=`echo $f | sed 's/\.miRNA_miRBase\.sam//' | sed 's/2_output\///g'`
+output_dir="32_output"
+spe="miRNA_miRBase"
+echo "#$ -N $lib.${i}M.htseq
+#$ -q medium*
+#$ -cwd
+#$ -o ./ogs_output/ogs_output.txt
+#$ -e ./ogs_output/ogs_error.txt
+grep "${i}M" ./2_output/$lib.$spe.sam > tmp.${i}M.$lib.$spe.sam
+/lustre/projects/staton/software/htseq-count \
+-s no \
+-t miRNA \
+-i ID \
+-a 0 \
+-o ./$output_dir/$lib.$spe.sam \
+tmp.${i}M.$lib.$spe.sam \
+${spe}.gff3 \
+>& ./$output_dir/$lib.$spe.${i}M.htseq.txt
+grep "__no_feature" ./$output_dir/$lib.$spe.${i}M.sam | grep -o '.*[	.*$]' > ./$output_dir/$lib.$spe.${i}M.nohit.sam
+grep -v "__no_feature" ./$output_dir/$lib.$spe.${i}M.sam > ./$output_dir/$lib.$spe.${i}M.parse.sam
+rm -f tmp.${i}M.$lib.$spe.sam
+" > sub.ogs
+qsub sub.ogs
+rm -f sub.ogs
+done
+done
+```
+---
+####process each of the miRNA.sam files to see what transposable_elements they overlap with each miRNA.sam file is separated into 29,31 bps.
+```
+for f in `ls 2_output/*.miRNA_TAIR10.sam`
+do
+for i in {29,31} 
+do
+lib=`echo $f | sed 's/\.miRNA_TAIR10\.sam//' | sed 's/2_output\///g'`
+output_dir="33_output"
+spe="miRNA_TAIR10"
+echo "#$ -N $lib.${i}M.htseq
+#$ -q medium*
+#$ -cwd
+#$ -o ./ogs_output/ogs_output.txt
+#$ -e ./ogs_output/ogs_error.txt
+grep "${i}M" ./2_output/$lib.miRNA_TAIR10.sam > tmp.${i}M.$lib.miRNA.sam
+/lustre/projects/staton/software/htseq-count \
+-s no \
+-t miRNA \
+-i ID \
+-a 0 \
+-o ./$output_dir/$lib.$spe.miRNA.sam \
+tmp.${i}M.$lib.miRNA.sam \
+${spe}.gff3 \
+>& ./$output_dir/$lib.$spe.${i}M.miRNA.htseq.txt
+grep "__no_feature" ./$output_dir/$lib.$spe.${i}M.miRNA.sam | grep -o '.*[	.*$]' > ./$output_dir/$lib.$spe.${i}M.miRNA.nohit.sam
+grep -v "__no_feature" ./$output_dir/$lib.$spe.${i}M.miRNA.sam > ./$output_dir/$lib.$spe.${i}M.miRNA.parse.sam
+rm -f tmp.${i}M.$lib.miRNA.sam
+" > sub.ogs
+qsub sub.ogs
+rm -f sub.ogs
+done
 done
 ```
 ---
